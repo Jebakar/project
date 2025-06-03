@@ -137,8 +137,8 @@ img {
 }
 /*  */
 html, body {
-  overflow-x: hidden; 
-}
+  overflow-x: hidden;  
+} 
 .swiper-pagination-vertical{
    margin-right: -8px; 
 }

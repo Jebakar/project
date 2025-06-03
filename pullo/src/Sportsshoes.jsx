@@ -166,9 +166,9 @@ function SportsShoes() {
       const res = await axios.get("http://localhost:9000/api/products/category/sports");  
       setProducts(res.data); 
     } catch (err) {  
-      console.error("Error fetching sports shoes:", err); 
-    } 
-  }; 
+      console.error("Error fetching sports shoes:", err);  
+    }  
+  };  
 
   const updateCartCount = () => {    
     const cart = JSON.parse(localStorage.getItem("cart")) || []; 
@@ -242,14 +242,14 @@ function SportsShoes() {
                           $ <span style={{ color: "#ff4e5b" }}>{product.price}</span>   
                         </div>      
                       </div>        
-                    </div>       
+                    </div>        
 
                     <div style={{ display: "flex", justifyContent: "center", marginTop: "auto" }}> 
                       <button  
                         style={{   
                           backgroundColor: "#ff4e5b",   
                           color: "#fff",   
-                          border: "none",   
+                          border: "none",    
                           borderRadius: "5px", 
                           padding: "8px 16px",  
                           cursor: "pointer"   
@@ -269,8 +269,8 @@ function SportsShoes() {
             </div> 
           </div> 
         </div> 
-        <Footer /> 
-      </div>
+        <Footer />  
+      </div> 
     </>
   );
 }

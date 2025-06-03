@@ -38,11 +38,53 @@ mongoose.connect("mongodb://localhost:27017/mydb")
 // User Schema
 
 // Signup Route
+// app.post('/signup', async (req, res) => {
+//   const { firstName, lastName, email, password, number, dob, gender } = req.body;
+
+//   if (!firstName || !lastName || !email || !password || !number || !dob || !gender) {
+//     return res.status(400).json({ message: "All fields are required" });
+//   }
+
+//   try {
+//     const emailExists = await User.findOne({ email });
+//     const phoneExists = await User.findOne({ number });
+
+//     if (emailExists) {
+//       return res.status(409).json({ message: "Email already registered" });
+//     }
+//     if (phoneExists) {
+//       return res.status(409).json({ message: "Mobile number already registered" });
+//     }
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     const newUser = new User({
+//       firstName,
+//       lastName,
+//       email,
+//       password: hashedPassword,
+//       number,
+//       dob,
+//       gender,
+//     });
+
+//     await newUser.save();
+//     res.status(201).json({ message: "User registered successfully" });
+
+//   } catch (err) {
+//     console.error("Signup error:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+// SIGNUP ROUTE
+
+// ✅ SIGNUP ROUTE
 app.post('/signup', async (req, res) => {
   const { firstName, lastName, email, password, number, dob, gender } = req.body;
 
   if (!firstName || !lastName || !email || !password || !number || !dob || !gender) {
-    return res.status(400).json({ message: "All fields are required" });
+    return res.status(400).json({ message: 'All fields are required' });
   }
 
   try {
@@ -50,97 +92,109 @@ app.post('/signup', async (req, res) => {
     const phoneExists = await User.findOne({ number });
 
     if (emailExists) {
-      return res.status(409).json({ message: "Email already registered" });
+      return res.status(409).json({ message: 'Email already registered' });
     }
     if (phoneExists) {
-      return res.status(409).json({ message: "Mobile number already registered" });
+      return res.status(409).json({ message: 'Mobile number already registered' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new User({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword,
-      number,
-      dob,
-      gender,
-    });
-
+    const newUser = new User({ firstName, lastName, email, password, number, dob, gender });
     await newUser.save();
-    res.status(201).json({ message: "User registered successfully" });
 
+    res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
-    console.error("Signup error:", err);
-    res.status(500).json({ message: "Server error" });
+    console.error('Signup error:', err);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
 // Signin Route
+// SIGNIN ROUTE
 app.post('/signin', async (req, res) => {
   const { email, password } = req.body;
-  console.log("Email:", email);
-  console.log("Password:", password);
+  console.log('Email:', email);
+  console.log('Password:', password);
 
   try {
     const user = await User.findOne({ email });
-    console.log("User found:", user);
+    console.log('User found:', user);
 
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Password match:", isMatch);
+    const isMatch = await user.comparePassword(password);
+    console.log('Password match:', isMatch);
 
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'your_secret_key', {
+      expiresIn: '1h'
+    });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: 'Sign in successful',
       token,
       user: {
         id: user._id,
         email: user.email,
         firstName: user.firstName,
-        lastName: user.lastName,
-      },
+        lastName: user.lastName
+      }
     });
   } catch (error) {
     console.error('Sign in error:', error);
-    return res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
-// Forgot Password Route
 
-app.post('/forgot-password', async (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ message: 'Email is required' });
+// SIGN IN
+// app.post('/signin', async (req, res) => {
+//   const { email, password } = req.body;
+//   console.log("Email:", email);
+//   console.log("Password:", password);
 
-  try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: 'User not found' });
+//   try {
+//     const user = await User.findOne({ email });
+//     console.log("User found:", user);
 
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000;
-    await user.save();
+//     if (!user) {
+//       return res.status(401).json({ message: 'Invalid email or password' });
+//     }
 
-    // Normally you'd email the token, but for dev just return it
-    return res.status(200).json({
-      message: 'Reset link generated',
-      token: resetToken, // <-- return it here
-    });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: 'Server error' });
-  }
-});
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     console.log("Password match:", isMatch);
+
+//     if (!isMatch) {
+//       return res.status(401).json({ message: 'Invalid email or password' });
+//     }
+
+//     const token = jwt.sign(
+//       { id: user._id },
+//       process.env.JWT_SECRET || "yoursecretkey",
+//       { expiresIn: '1h' }
+//     );
+
+//     return res.status(200).json({
+//       message: 'Sign in successful',
+//       token,
+//       user: {
+//         id: user._id,
+//         email: user.email,
+//         firstName: user.firstName,
+//         lastName: user.lastName,
+//       },
+//     });
+//   } catch (error) {
+//     console.error('Sign in error:', error);
+//     return res.status(500).json({ message: 'Server error' });
+//   }
+// });
+
+
 
 // Reset Password Route
 app.post('/reset-password/:token', async (req, res) => {

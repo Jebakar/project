@@ -19,6 +19,7 @@ const SignIn = () => {
       password: Yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
     }),
     onSubmit: async (values) => {
+      console.log("Submitting values:", values);
       try {
         const response = await axios.post("http://localhost:9000/signin", values, {
           headers: { "Content-Type": "application/json" },
@@ -65,6 +66,7 @@ const SignIn = () => {
             <input
               type="email"
               id="email"
+              name="email" 
               className="form-control"
               {...formik.getFieldProps("email")}
             />
@@ -78,6 +80,7 @@ const SignIn = () => {
             <input
               type="password"
               id="password"
+               name="password" 
               className="form-control"
               {...formik.getFieldProps("password")}
             />
