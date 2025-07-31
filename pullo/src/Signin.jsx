@@ -10,11 +10,11 @@ const SignIn = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-    },
-    validationSchema: Yup.object({
+    initialValues: { 
+      email: "",    
+      password: "",   
+    },               
+    validationSchema: Yup.object({  
       email: Yup.string().email("Invalid email format").required("Email is required"),
       password: Yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
     }),
@@ -32,14 +32,14 @@ const SignIn = () => {
         setSuccessMessage("Sign in successful!");
         setErrorMessage("");
 
-        // Redirect after short delay
-        setTimeout(() => {
-          navigate("/");
+        // Redirect after short delay 
+        setTimeout(() => { 
+          navigate("/"); 
         }, 1500);
-      } catch (error) {
+      } catch (error) { 
         const message = error.response?.data?.message || "Sign in failed";
-        setErrorMessage(message);
-        setSuccessMessage("");
+        setErrorMessage(message); 
+        setSuccessMessage(""); 
       }
     },
   });

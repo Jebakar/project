@@ -8,22 +8,22 @@ async function createAdmin() {
   const hashedPassword = await bcrypt.hash('admin123', 10);
 
   await User.findOneAndUpdate(
-    { email: 'admin@example.com' },
+    { email: 'admin@example.com' }, 
     {
       firstName: 'Admin',
       lastName: 'User',
-      email: 'admin@example.com',
-      password: hashedPassword,
-      role: 'admin',
-      number: '9999999999',
-      dob: new Date('1990-01-01'),
-      gender: 'Male',
+      email: 'admin@example.com', 
+      password: hashedPassword, 
+      role: 'admin', 
+      number: '9999999999',  
+      dob: new Date('1990-01-01'), 
+      gender: 'Male', 
     },
     { upsert: true }
   );
 
   console.log('✅ Admin user created/updated');
-  mongoose.disconnect();
-}
+  mongoose.disconnect(); 
+} 
 
-createAdmin();
+createAdmin(); 
